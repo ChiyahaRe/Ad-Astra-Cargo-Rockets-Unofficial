@@ -1,3 +1,6 @@
+This is my first time mod making.
+This mod may cause many bug, and i can't treat almost bugs. sorry
+
 # Rocket Launchpad Lua API
 
 This API allows you to control a rocket launchpad from a CC:Tweaked computer. It provides functions to launch rockets, manage inventories, and check energy levels.

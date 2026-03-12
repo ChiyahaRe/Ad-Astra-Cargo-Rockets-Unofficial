@@ -25,7 +25,8 @@ Attempts to launch a rocket to the specified planet. (See `getValidDestinations`
 - `"No rocket found"` – No rocket is on the launchpad.
 - `"<planet> is not a valid planet"` – The specified planet name is invalid.
 - `"Not enough energy to launch"` – The launchpad lacks sufficient energy.
-- `"<planet> is too high of a tier for this rocket"` – The rocket tier is too low for the destination.
+- `"Not enough fuel to launch"` – The launchpad lacks sufficient fuel.
+- `"<planet> is require Tier<requiredtier> rocket."` – The rocket tier is too low for the destination.
 
 ---
 

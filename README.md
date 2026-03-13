@@ -1,5 +1,5 @@
 This is my first time mod making.
-This mod may cause many bug, and i can't treat almost bugs. sorry
+This mod may cause many bug, and i can't treat almost bugs. sorry. by Chiya
 
 # Rocket Launchpad Lua API
 

@@ -196,12 +196,14 @@ public class CargoRocketEntity extends Entity implements InventoryOwner {
         super.tick();
 
         this.setPosition(this.getX(), this.getY() + this.getVelocity().y, this.getZ());
+        this.checkBlockCollision();
 
         if(getWorld().isClient()){
             if(this.getVelocity().y < -0.1){
                 boolean groundNearby = false;
                 for(int i = 1; i < 30; i++){
-                    if(!getWorld().getBlockState(getBlockPos().add(0, -i, 0)).isAir()){
+                    BlockPos checkPos = getBlockPos().add(0, -i, 0);
+                    if(!getWorld().getBlockState(checkPos).getCollisionShape(getWorld(), checkPos).isEmpty()){
                         groundNearby = true;
                         break;
                     }
@@ -324,7 +326,8 @@ public class CargoRocketEntity extends Entity implements InventoryOwner {
                 boolean isBlocked = false;
                 for (int x = -1; x <= 1; x++) {
                     for (int z = -1; z <= 1; z++) {
-                         if (!getWorld().getBlockState(new BlockPos(getBlockPos().getX() + x, y, getBlockPos().getZ() + z)).isAir()) {
+                         BlockPos checkPos = new BlockPos(getBlockPos().getX() + x, y, getBlockPos().getZ() + z);
+                         if (!getWorld().getBlockState(checkPos).getCollisionShape(getWorld(), checkPos).isEmpty()) {
                              isBlocked = true;
                              break;
                          }

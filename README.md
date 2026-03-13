@@ -1,3 +1,11 @@
+This is my first time mod making.
+This mod may cause many bug, and maybe i can't treat almost bugs. sorry. by Chiya
+
+## For modpack creators
+This mod add itemtag `denied_in_launch_pad` to prevent to use specified item in launch pad (e.g. shulker box)
+<br>By using this tag,you can prevent illegal transport technic.
+
+
 # Rocket Launchpad Lua API
 
 This API allows you to control a rocket launchpad from a CC:Tweaked computer. It provides functions to launch rockets, manage inventories, and check energy levels.
@@ -29,6 +37,18 @@ Attempts to launch a rocket to the specified planet. (See `getValidDestinations`
 
 ---
 
+## 📥 `loadAllItems([filter])`
+Moves all items from the launchpad's inventory to the rocket's inventory.
+<br>If you specify an item ID, you can move only that item.
+
+## 📤 `unloadAllItems([filter])`
+Moves all items from the rocket's inventory to the launchpad's inventory.
+<br>If you specify an item ID, you can move only that item.
+
+### Parameters
+- `filter`_?_ (string) : Name of the item to load or unload (e.g. "minecraft:cobblestone")
+
+---
 ## 📥 `moveItemsFromRocketToLaunchPad(rocketSlot, launchPadSlot)`
 Moves an item from the rocket's inventory to the launchpad's inventory.
 

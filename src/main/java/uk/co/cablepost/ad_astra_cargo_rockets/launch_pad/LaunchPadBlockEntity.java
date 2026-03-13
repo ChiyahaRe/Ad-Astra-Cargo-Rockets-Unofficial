@@ -17,8 +17,11 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -34,6 +37,7 @@ import java.util.*;
 public class LaunchPadBlockEntity extends AbstractFluidMachineBlockEntity implements net.minecraft.screen.NamedScreenHandlerFactory {
 
     private final Set<IComputerAccess> computers = new HashSet<>();
+    public static final TagKey<net.minecraft.item.Item> DENIED_ITEMS = TagKey.of(RegistryKeys.ITEM, new Identifier(AdAstraCargoRockets.MOD_ID, "denied_in_launch_pad"));
 
     public LaunchPadBlockEntity(BlockPos pos, BlockState state) {
         super(
@@ -42,7 +46,7 @@ public class LaunchPadBlockEntity extends AbstractFluidMachineBlockEntity implem
             state,
             new int[]{ 0,  1,  2,  3,  4,  5,  6,  7,  8 },
             new int[]{ 9, 10, 11, 12, 13, 14, 15, 16, 17 },
-            10000,
+            50000,
             1000,
             0,
             false
@@ -135,6 +139,10 @@ public class LaunchPadBlockEntity extends AbstractFluidMachineBlockEntity implem
             return ItemMoveFailReason.INVALID_SLOT;
         }
 
+        if (rocketStack.isIn(DENIED_ITEMS)) {
+            return ItemMoveFailReason.TARGET_FULL; // Or a new fail reason like "ITEM_DENIED" but TARGET_FULL works for stopping move
+        }
+
         if(!launchPadStack.isEmpty() && (!rocketStack.getItem().equals(launchPadStack.getItem()) || launchPadStack.getCount() >= launchPadStack.getMaxCount())) {
             return ItemMoveFailReason.TARGET_FULL;
         }
@@ -176,6 +184,11 @@ public class LaunchPadBlockEntity extends AbstractFluidMachineBlockEntity implem
         }catch (Exception ignored){
             return ItemMoveFailReason.INVALID_SLOT;
         }
+
+        // Check if item is denied (even when moving to rocket? Usually constraints are on LaunchPad inventory, but moving OUT is fine.
+        // Wait, the request is "prevent storage items from being moved INTO LaunchPad".
+        // moveStackFromRocketToLaunchPad is Rocket -> LaunchPad. So we checked there.
+        // External pipes insert into LaunchPad via SidedInventory.
 
         if(!rocketStack.isEmpty() && (!launchPadStack.getItem().equals(rocketStack.getItem()) || rocketStack.getCount() >= rocketStack.getMaxCount())) {
             return ItemMoveFailReason.TARGET_FULL;
@@ -279,7 +292,7 @@ public class LaunchPadBlockEntity extends AbstractFluidMachineBlockEntity implem
     }
 
     public int getEnergyRequiredForLaunch() {
-        return 2500;
+        return 5000;
     }
     public int getFuelRequiredForLaunch() {
         return 600000;
@@ -334,5 +347,13 @@ public class LaunchPadBlockEntity extends AbstractFluidMachineBlockEntity implem
         }
 
         rocket.killRocket();
+    }
+
+    @Override
+    public boolean isValid(int slot, ItemStack stack) {
+        if (stack.isIn(DENIED_ITEMS)) {
+            return false;
+        }
+        return super.isValid(slot, stack);
     }
 }

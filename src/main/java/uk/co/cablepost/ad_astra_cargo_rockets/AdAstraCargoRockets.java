@@ -6,6 +6,8 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EntityDimensions;
@@ -64,15 +66,15 @@ public class AdAstraCargoRockets implements ModInitializer {
 
         FluidStorage.SIDED.registerForBlocks(
                 (world, pos, state, blockEntity, direction) -> {
-                    // 1. まず今チェックしているブロック自体が LaunchPadBlockEntity か確認
+
                     if (blockEntity instanceof LaunchPadBlockEntity launchPad) {
-                        return launchPad.fluidTank; // ここでエラーが出るなら、変数名が違うかprivateです
+                        return launchPad.fluidTank;
                     }
 
-                    // 2. 周囲のブロック（Machine Shellなど）から中央を探すロジック
+
                     for (int x = -1; x <= 1; x++) {
                         for (int z = -1; z <= 1; z++) {
-                            if (x == 0 && z == 0) continue; // 自分自身はスキップ（無限ループ防止）
+                            if (x == 0 && z == 0) continue;
 
                             BlockPos checkPos = pos.add(x, 0, z);
                             BlockEntity be = world.getBlockEntity(checkPos);
@@ -84,8 +86,34 @@ public class AdAstraCargoRockets implements ModInitializer {
                     }
                     return null;
                 },
-                LAUNCH_PAD.getBlock(),                    // 中央
-                MachineShellBlockInit.MACHINE_SHELL_BLOCK // 周囲
+                LAUNCH_PAD.getBlock(),
+                MachineShellBlockInit.MACHINE_SHELL_BLOCK
+        );
+
+        ItemStorage.SIDED.registerForBlocks(
+                (world, pos, state, blockEntity, direction) -> {
+
+                    if (blockEntity instanceof LaunchPadBlockEntity launchPad) {
+                        return InventoryStorage.of(launchPad, direction);
+                    }
+
+
+                    for (int x = -1; x <= 1; x++) {
+                        for (int z = -1; z <= 1; z++) {
+                            if (x == 0 && z == 0) continue;
+
+                            BlockPos checkPos = pos.add(x, 0, z);
+                            BlockEntity be = world.getBlockEntity(checkPos);
+
+                            if (be instanceof LaunchPadBlockEntity launchPad) {
+                                return InventoryStorage.of(launchPad, direction);
+                            }
+                        }
+                    }
+                    return null;
+                },
+                LAUNCH_PAD.getBlock(),
+                MachineShellBlockInit.MACHINE_SHELL_BLOCK
         );
     }
 

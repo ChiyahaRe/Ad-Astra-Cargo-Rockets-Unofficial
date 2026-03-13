@@ -1,6 +1,7 @@
 package uk.co.cablepost.ad_astra_cargo_rockets.launch_pad;
 
 import dan200.computercraft.api.detail.VanillaDetailRegistries;
+import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -204,5 +205,109 @@ public class LaunchPadBlockPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public void destroyRocket(){
         blockEntity.destroyRocket();
+    }
+
+    @LuaFunction(mainThread = true)
+    public final void loadAllItems(IArguments args) throws LuaException {
+        if (blockEntity.getRocket() == null) {
+            throw new LuaException("No rocket found");
+        }
+
+        String filter = args.optString(0, null);
+        String filterItemId = null;
+        if (filter != null && !filter.isEmpty()) {
+            String parsedId;
+            if (filter.contains("[")) {
+                parsedId = filter.substring(0, filter.indexOf('['));
+            } else {
+                parsedId = filter;
+            }
+            if (!parsedId.isEmpty()) {
+                filterItemId = parsedId;
+            }
+        }
+
+        for (int i = 1; i <= 9; i++) {
+            var stack = blockEntity.getStack(i - 1); // getStack is 0-indexed
+            if (stack.isEmpty()) {
+                continue;
+            }
+
+            if (filterItemId != null) {
+                String itemId = Registries.ITEM.getId(stack.getItem()).toString();
+                if (!itemId.equals(filterItemId)) {
+                    continue;
+                }
+            }
+
+            @Nullable ItemMoveFailReason reason = blockEntity.moveStackFromLaunchPadToRocket(i, i);
+
+            if (reason != null && reason != ItemMoveFailReason.TARGET_FULL) {
+                switch (reason) {
+                    case INVALID_SLOT:
+                        throw new LuaException("Invalid slot: " + i);
+                    case NO_ROCKET:
+                        // This is already checked at the start, but for completeness.
+                        throw new LuaException("No rocket found");
+                    default:
+                        // We are ignoring TARGET_FULL.
+                        break;
+                }
+            }
+        }
+    }
+
+    @LuaFunction(mainThread = true)
+    public final void unloadAllItems(IArguments args) throws LuaException {
+        @Nullable CargoRocketEntity rocket = blockEntity.getRocket();
+        if (rocket == null) {
+            throw new LuaException("No rocket found");
+        }
+
+        String filter = args.optString(0, null);
+        String filterItemId = null;
+        if (filter != null && !filter.isEmpty()) {
+            String parsedId;
+            if (filter.contains("[")) {
+                parsedId = filter.substring(0, filter.indexOf('['));
+            } else {
+                parsedId = filter;
+            }
+            if (!parsedId.isEmpty()) {
+                filterItemId = parsedId;
+            }
+        }
+
+        int rocketInventorySize = rocket.getInventory().size();
+        for (int i = 1; i <= rocketInventorySize; i++) {
+            var stack = rocket.getInventory().getStack(i - 1);
+            if (stack.isEmpty()) {
+                continue;
+            }
+
+            if (filterItemId != null) {
+                String itemId = Registries.ITEM.getId(stack.getItem()).toString();
+                if (!itemId.equals(filterItemId)) {
+                    continue;
+                }
+            }
+
+            // Try to move to any of the 9 output slots (10-18)
+            for (int targetSlot : blockEntity._outputSlots) {
+                @Nullable ItemMoveFailReason reason = blockEntity.moveStackFromRocketToLaunchPad(i, targetSlot + 1);
+
+                if (reason == null) {
+                    break; // Successfully moved some/all
+                }
+
+                if (reason != ItemMoveFailReason.TARGET_FULL) {
+                    switch (reason) {
+                        case INVALID_SLOT -> throw new LuaException("Invalid slot: " + i);
+                        case NO_ROCKET -> throw new LuaException("No rocket found");
+                    }
+                }
+                // If TARGET_FULL, try the next output slot
+            }
+        }
     }
 }

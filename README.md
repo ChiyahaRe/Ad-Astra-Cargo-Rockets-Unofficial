@@ -158,3 +158,7 @@ Returns the current non-empty inventory of the rocket.
     - `max_count` (int): Maximum stack size.
 
 ---
+## Credit
+Fork Source: Ad Astra Cargo Rockets by BillBodkin
+URL: https://modrinth.com/mod/ad-astra-cargo-rockets
+

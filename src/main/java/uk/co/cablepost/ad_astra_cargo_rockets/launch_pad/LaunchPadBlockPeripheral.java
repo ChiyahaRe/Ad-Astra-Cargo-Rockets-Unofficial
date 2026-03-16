@@ -9,6 +9,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -56,18 +57,17 @@ public class LaunchPadBlockPeripheral implements IPeripheral {
 
         if(launchFailReason == null){
             if (rocket != null) {
-                // Ad Astra の音の ID を作成
-                Identifier adAstraRocketSound = new Identifier("ad_astra", "rocket");
-
-                // その ID に対応する SoundEvent を取得して再生
-                rocket.getWorld().playSound(
-                        null,
-                        rocket.getBlockPos(),
-                        net.minecraft.registry.Registries.SOUND_EVENT.get(adAstraRocketSound),
-                        SoundCategory.NEUTRAL,
-                        1.0f,
-                        1.0f
-                );
+                var sound = Registries.SOUND_EVENT.get(new Identifier("ad_astra", "launch"));
+                if(sound != null) {
+                    rocket.getWorld().playSound(null, rocket.getBlockPos(), sound, SoundCategory.NEUTRAL, 1.0f, 1.0f);
+                } else {
+                    var alternativeSound = Registries.SOUND_EVENT.get(new Identifier("northstar", "rocket_landing"));
+                    if (alternativeSound != null) {
+                        rocket.getWorld().playSound(null, rocket.getBlockPos(), alternativeSound, SoundCategory.NEUTRAL, 1.0f, 1.0f);
+                    } else {
+                        rocket.getWorld().playSound(null, rocket.getBlockPos(), SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundCategory.NEUTRAL, 1.0f, 1.0f);
+                    }
+                }
             }
             return;
         }

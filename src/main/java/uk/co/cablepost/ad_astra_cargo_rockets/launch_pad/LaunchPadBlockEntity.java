@@ -17,6 +17,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenHandler;
@@ -28,6 +29,7 @@ import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 import uk.co.cablepost.ad_astra_cargo_rockets.AbstractFluidMachineBlockEntity;
 import uk.co.cablepost.ad_astra_cargo_rockets.AdAstraCargoRockets;
+import uk.co.cablepost.ad_astra_cargo_rockets.ModConfig;
 import uk.co.cablepost.ad_astra_cargo_rockets.cargo_rocket.CargoRocketEntity;
 import uk.co.cablepost.f_tech.config.FTechConfig;
 import uk.co.cablepost.f_tech.machines.abstract_machine.AbstractMachineBlockEntity;
@@ -185,11 +187,6 @@ public class LaunchPadBlockEntity extends AbstractFluidMachineBlockEntity implem
             return ItemMoveFailReason.INVALID_SLOT;
         }
 
-        // Check if item is denied (even when moving to rocket? Usually constraints are on LaunchPad inventory, but moving OUT is fine.
-        // Wait, the request is "prevent storage items from being moved INTO LaunchPad".
-        // moveStackFromRocketToLaunchPad is Rocket -> LaunchPad. So we checked there.
-        // External pipes insert into LaunchPad via SidedInventory.
-
         if(!rocketStack.isEmpty() && (!launchPadStack.getItem().equals(rocketStack.getItem()) || rocketStack.getCount() >= rocketStack.getMaxCount())) {
             return ItemMoveFailReason.TARGET_FULL;
         }
@@ -264,17 +261,21 @@ public class LaunchPadBlockEntity extends AbstractFluidMachineBlockEntity implem
             return LaunchFailReason.NOT_ENOUGH_ENERGY;
         }
 
+        String fluidId = Registries.FLUID.getId(fluidTank.variant.getFluid()).toString();
+        double performanceMultiplier = ModConfig.INSTANCE.fuels.getOrDefault(fluidId, 1.0);
+        if (performanceMultiplier <= 0) performanceMultiplier = 1.0; // Prevent division by zero
 
-        if (fluidTank.amount < getFuelRequiredForLaunch() * difficulty) {
+        int actualFuelRequired = (int) ((getFuelRequiredForLaunch() * difficulty) / performanceMultiplier);
+
+        if (fluidTank.amount < actualFuelRequired) {
             return LaunchFailReason.NOT_ENOUGH_FUEL;
         }
 
-
         try (Transaction transaction = Transaction.openOuter()) {
 
-            long extracted = fluidTank.extract(fluidTank.variant, (getFuelRequiredForLaunch()* difficulty), transaction);
+            long extracted = fluidTank.extract(fluidTank.variant, actualFuelRequired, transaction);
 
-            if (extracted == (getFuelRequiredForLaunch() * difficulty)) {
+            if (extracted == actualFuelRequired) {
 
                 _energyStorage.amount -= (getEnergyRequiredForLaunch() * difficulty);
                 rocket.targetPlanet = planet;
@@ -295,7 +296,7 @@ public class LaunchPadBlockEntity extends AbstractFluidMachineBlockEntity implem
         return 5000;
     }
     public int getFuelRequiredForLaunch() {
-        return 600000;
+        return 600000; // Base fuel cost
     }
 
     public long getEnergy(){
@@ -313,19 +314,7 @@ public class LaunchPadBlockEntity extends AbstractFluidMachineBlockEntity implem
         assert world != null;
         var worlds = Objects.requireNonNull(world.getServer()).getWorlds();
 
-        Map<String, Integer> tierIndex = new HashMap<>();
-        tierIndex.put("minecraft:overworld", 0);
-        tierIndex.put("ad_astra:earth_orbit", 1);
-        tierIndex.put("ad_astra:moon", 1);
-        tierIndex.put("ad_astra:moon_orbit", 1);
-        tierIndex.put("ad_astra:mars", 2);
-        tierIndex.put("ad_astra:mars_orbit", 2);
-        tierIndex.put("ad_astra:mercury", 3);
-        tierIndex.put("ad_astra:mercury_orbit", 3);
-        tierIndex.put("ad_astra:venus", 3);
-        tierIndex.put("ad_astra:venus_orbit", 3);
-        tierIndex.put("ad_astra:glacio", 4);
-        tierIndex.put("ad_astra:glacio_orbit", 4);
+        Map<String, Integer> tierIndex = ModConfig.INSTANCE.validDestinations;
 
         Map<String, Integer> validDestinations = new HashMap<>();
 

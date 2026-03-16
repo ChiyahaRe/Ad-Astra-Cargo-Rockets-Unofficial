@@ -215,26 +215,39 @@ public class CargoRocketEntity extends Entity implements InventoryOwner {
                         if (flame instanceof ParticleEffect particleEffect) {
                             getWorld().addParticle(particleEffect, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
                         } else {
-                            getWorld().addParticle(ParticleTypes.FLAME, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                            var altFlame = Registries.PARTICLE_TYPE.get(new Identifier("northstar", "rocket_flame"));
+                            if (altFlame instanceof ParticleEffect altParticleEffect) {
+                                getWorld().addParticle(altParticleEffect, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                            } else {
+                                getWorld().addParticle(ParticleTypes.FLAME, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                            }
                         }
 
                         var smoke = Registries.PARTICLE_TYPE.get(new Identifier("ad_astra", "large_smoke"));
                         if (smoke instanceof ParticleEffect particleEffect) {
                             getWorld().addParticle(particleEffect, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
                         } else {
-                            getWorld().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                            var altSmoke = Registries.PARTICLE_TYPE.get(new Identifier("ad_astra", "rocket_smoke"));
+                            if (altSmoke instanceof ParticleEffect altParticleEffect) {
+                                getWorld().addParticle(altParticleEffect, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                            } else {
+                                getWorld().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                            }
                         }
                     }
 
                     if(!hasPlayedLandingSound){
                         hasPlayedLandingSound = true;
-                        // Use Ad Astra sound event
-                        var sound = Registries.SOUND_EVENT.get(new Identifier("ad_astra", "rocket"));
+                        var sound = Registries.SOUND_EVENT.get(new Identifier("ad_astra", "launch"));
                         if(sound != null) {
                             getWorld().playSound(getX(), getY(), getZ(), sound, SoundCategory.AMBIENT, 2f, 0.5f, false);
                         } else {
-                            // Fallback if not found (though user asked for 'rocket', usually it's rocket_fly or similar in ad_astra)
-                             getWorld().playSound(getX(), getY(), getZ(), SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundCategory.AMBIENT, 2f, 0.5f, false);
+                            var alternativeSound = Registries.SOUND_EVENT.get(new Identifier("northstar", "rocket_landing"));
+                            if (alternativeSound != null) {
+                                getWorld().playSound(getX(), getY(), getZ(), alternativeSound, SoundCategory.AMBIENT, 2f, 0.5f, false);
+                            } else {
+                                getWorld().playSound(getX(), getY(), getZ(), SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundCategory.AMBIENT, 2f, 0.5f, false);
+                            }
                         }
                     }
                 } else {
@@ -247,24 +260,39 @@ public class CargoRocketEntity extends Entity implements InventoryOwner {
                     if (flame instanceof ParticleEffect particleEffect) {
                         getWorld().addParticle(particleEffect, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
                     } else {
-                        getWorld().addParticle(ParticleTypes.FLAME, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                        var altFlame = Registries.PARTICLE_TYPE.get(new Identifier("northstar", "rocket_flame"));
+                        if (altFlame instanceof ParticleEffect altParticleEffect) {
+                            getWorld().addParticle(altParticleEffect, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                        } else {
+                            getWorld().addParticle(ParticleTypes.FLAME, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                        }
                     }
 
                     var smoke = Registries.PARTICLE_TYPE.get(new Identifier("ad_astra", "large_smoke"));
                     if (smoke instanceof ParticleEffect particleEffect) {
                         getWorld().addParticle(particleEffect, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
                     } else {
-                        getWorld().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                        var altSmoke = Registries.PARTICLE_TYPE.get(new Identifier("ad_astra", "rocket_smoke"));
+                        if (altSmoke instanceof ParticleEffect altParticleEffect) {
+                            getWorld().addParticle(altParticleEffect, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                        } else {
+                            getWorld().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, true, getX() + (random.nextDouble() - 0.5), getY(), getZ() + (random.nextDouble() - 0.5), 0, -0.2, 0);
+                        }
                     }
                 }
 
                 int ticks = getLaunchTicks();
                 if (ticks == 1 || ticks == 40) {
-                     var sound = Registries.SOUND_EVENT.get(new Identifier("ad_astra", "rocket"));
+                     var sound = Registries.SOUND_EVENT.get(new Identifier("ad_astra", "launch"));
                      if(sound != null) {
                          getWorld().playSound(getX(), getY(), getZ(), sound, SoundCategory.AMBIENT, 2f, 0.5f, false);
                      } else {
-                         getWorld().playSound(getX(), getY(), getZ(), SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundCategory.AMBIENT, 2f, 0.5f, false);
+                         var alternativeSound = Registries.SOUND_EVENT.get(new Identifier("northstar", "rocket_takeoff"));
+                         if (alternativeSound != null) {
+                             getWorld().playSound(getX(), getY(), getZ(), alternativeSound, SoundCategory.AMBIENT, 2f, 0.5f, false);
+                         } else {
+                             getWorld().playSound(getX(), getY(), getZ(), SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundCategory.AMBIENT, 2f, 0.5f, false);
+                         }
                      }
                 }
 

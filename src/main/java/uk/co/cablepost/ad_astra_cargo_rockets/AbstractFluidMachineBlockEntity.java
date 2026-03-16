@@ -26,10 +26,8 @@ public abstract class AbstractFluidMachineBlockEntity extends AbstractMachineBlo
 
 
         private boolean isResourceAllowed(FluidVariant variant) {
-
-            String fluidId = net.minecraft.registry.Registries.FLUID.getId(variant.getFluid()).toString();
-            return fluidId.equals("ad_astra:fuel");
-
+            String fluidId = Registries.FLUID.getId(variant.getFluid()).toString();
+            return ModConfig.INSTANCE.fuels.containsKey(fluidId);
         }
 
         @Override

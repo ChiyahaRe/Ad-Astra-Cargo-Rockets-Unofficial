@@ -56,6 +56,8 @@ public class AdAstraCargoRockets implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ModConfig.load();
+
         Registry.register(Registries.ITEM_GROUP, new Identifier(MOD_ID, "main_creative_inventory_tab"), ITEM_GROUP);
 
         Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "cargo_rocket_tier_1"), CARGO_ROCKET_TIER_1_ITEM);

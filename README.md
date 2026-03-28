@@ -1,9 +1,41 @@
 This is my first time mod making.
 This mod may cause many bug, and maybe i can't treat almost bugs. sorry. by Chiya
 
-## For modpack creators
+
+
+---
+This mod adds cargo rockets to Ad Astra and, when used with CC:tweaked, allows you to automate the transport of items between planets.
+
+# Features added in this fork
+## Added particle and sound, and rework launch/landing animation
+Use ad astra's sound and particle to expression
+<br>It can now take off and land more smoothly than before.
+<br>Also, a bug where the rocket would land on blocks without collision detection has been fixed.
+## New rocket type
+Added three new tiers of rockets.
+<br>Each tier has a different maximum number of planets it can reach.
+<br>The same range limitations apply as for AdAstra's rockets
+<br>With the addition of rocket tiers, fuel and energy consumption now increases depending on the destination
+## Added New useful tag
 This mod add itemtag `denied_in_launch_pad` to prevent to use specified item in launch pad (e.g. shulker box)
 <br>By using this tag,you can prevent illegal transport technic.
+## customizable the difficulty level and fuel efficiency for your destination 
+Change `config/ad_astra_cargo_rockets.json` to customize target destination cost and fuel efficient.
+
+
+## Added Useful CC's Function
+## 📥 `loadAllItems([filter])`
+Moves all items from the launchpad's inventory to the rocket's inventory.
+<br>If you specify an item ID, you can move only that item.
+
+## 📤 `unloadAllItems([filter])`
+Moves all items from the rocket's inventory to the launchpad's inventory.
+<br>If you specify an item ID, you can move only that item.
+
+### Parameters
+- `filter`_?_ (string) : Name of the item to load or unload (e.g. "minecraft:cobblestone")
+
+
 
 
 # Rocket Launchpad Lua API
@@ -35,18 +67,6 @@ Attempts to launch a rocket to the specified planet. (See `getValidDestinations`
 - `"Not enough energy to launch"` – The launchpad lacks sufficient energy.
 - `"<planet> is too high of a tier for this rocket"` – The rocket tier is too low for the destination.
 
----
-
-## 📥 `loadAllItems([filter])`
-Moves all items from the launchpad's inventory to the rocket's inventory.
-<br>If you specify an item ID, you can move only that item.
-
-## 📤 `unloadAllItems([filter])`
-Moves all items from the rocket's inventory to the launchpad's inventory.
-<br>If you specify an item ID, you can move only that item.
-
-### Parameters
-- `filter`_?_ (string) : Name of the item to load or unload (e.g. "minecraft:cobblestone")
 
 ---
 ## 📥 `moveItemsFromRocketToLaunchPad(rocketSlot, launchPadSlot)`

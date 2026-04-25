@@ -1,0 +1,9 @@
+{
+  "itemGroup.ad_astra_cargo_rockets.items": "Ad Astra カーゴロケット",
+  "entity.ad_astra_cargo_rockets.ad_astra_cargo_rocket": "カーゴロケット",
+  "block.ad_astra_cargo_rockets.launch_pad": "カーゴロケット発射台",
+  "item.ad_astra_cargo_rockets.cargo_rocket_tier_1": "カーゴロケット ティア1",
+  "item.ad_astra_cargo_rockets.cargo_rocket_tier_2": "カーゴロケット ティア2",
+  "item.ad_astra_cargo_rockets.cargo_rocket_tier_3": "カーゴロケット ティア3",
+  "item.ad_astra_cargo_rockets.cargo_rocket_tier_4": "カーゴロケット ティア4"
+}

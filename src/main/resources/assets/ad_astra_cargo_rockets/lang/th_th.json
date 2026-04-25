@@ -1,0 +1,9 @@
+{
+  "itemGroup.ad_astra_cargo_rockets.items": "Ad-Astra จรวดขนส่ง",
+  "entity.ad_astra_cargo_rockets.ad_astra_cargo_rocket": "จรวดขนส่ง",
+  "block.ad_astra_cargo_rockets.launch_pad": "แท่นปล่อยจรวดขนส่ง",
+  "item.ad_astra_cargo_rockets.cargo_rocket_tier_1": "จรวดขนส่งระดับ 1",
+  "item.ad_astra_cargo_rockets.cargo_rocket_tier_2": "จรวดขนส่งระดับ 2",
+  "item.ad_astra_cargo_rockets.cargo_rocket_tier_3": "จรวดขนส่งระดับ 3",
+  "item.ad_astra_cargo_rockets.cargo_rocket_tier_4": "จรวดขนส่งระดับ 4"
+}
